@@ -3,7 +3,9 @@ import 'package:news_c8_online/data/api_manages.dart';
 import 'package:news_c8_online/model/api_exception.dart';
 import 'package:news_c8_online/model/category_dm.dart';
 import 'package:news_c8_online/model/sources_response.dart';
+import 'package:news_c8_online/screens/home/tabs/news_tab/NewsTabViewModel.dart';
 import 'package:news_c8_online/screens/home/tabs/news_tab/tab_content.dart';
+import 'package:provider/provider.dart';
 
 class NewsTab extends StatefulWidget {
   CategoryDM categoryDM;
@@ -13,54 +15,78 @@ class NewsTab extends StatefulWidget {
 }
 
 class _NewsTabState extends State<NewsTab> {
-  int currentTabIndex = 0;
-  String name ="";
+ NewsTabViewModel viewModel = NewsTabViewModel();
+
+ @override
+  void initState() {
+    super.initState();
+    viewModel.categoryDM = widget.categoryDM;
+    viewModel.getSources();
+  }
 
   @override
   Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => viewModel,
+      builder: (context, _){
+        var viewModel = Provider.of<NewsTabViewModel>(context);
+        print("BUILDER WITH viewModel.Loading = ${viewModel.isLoading}");
+        if(viewModel.isLoading){
+          return Center(child: CircularProgressIndicator());
+        }
+        else {
+          if(viewModel.errorMsg.isEmpty){
+            return buildSuccessState();
+          }else {
+            return buildErrorState();
+          }
+        }
+      },
+    );
+  }
+ Widget buildErrorState(){
+   return Container(
+     child: Column(
+       mainAxisAlignment: MainAxisAlignment.center,
+       crossAxisAlignment: CrossAxisAlignment.stretch,
+       children: [
+         Center(child: Text(viewModel.errorMsg)),
+         Center(
+           child: ElevatedButton(onPressed: (){
+             viewModel.getSources();
+           },
+               child: Text("Retry")),
+         )
+       ],
+     ),
+   );
+ }
+
+  Widget buildSuccessState(){
     return Container(
-      child: FutureBuilder<SourcesResponse>(
-        future: ApiManager.getSources(widget.categoryDM.id),
-        builder: (context, snapshot){
-          if(snapshot.hasError){
-            if(snapshot.error is ApiException){
-              var error = snapshot.error as ApiException;
-              return Center(child: Text(error.message,
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)));
-            }
-             return Center(child: Text(snapshot.error.toString(),
-               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)));
-          }
-          else if(snapshot.hasData){
-            return  DefaultTabController(
-              length: snapshot.data!.sources!.length,
-              child: Column(
-                children: [
-                  SizedBox(height: 8,),
-                  TabBar(tabs: snapshot.data!.sources!.map((sourceDM) {
-                    return buildTabWidget(sourceDM.name ?? "unkown",
-                        currentTabIndex == snapshot.data!.sources!.indexOf(sourceDM));
-                  }).toList(),
-                    isScrollable: true,
-                    indicatorColor: Colors.transparent,
-                    onTap: (index){
-                      currentTabIndex = index;
-                      setState(() {});
-                    },
-                  ),
-                  Expanded(
-                    child: TabBarView(children: snapshot.data!.sources!.map((sourceDM) {
-                      return TabContent(sourceDM);
-                    }).toList()),
-                  )
-                ],
-              ),
-            );
-          }
-          else{
-            return Center(child: CircularProgressIndicator());
-          }
-        },
+      child: DefaultTabController(
+        length: viewModel.sources.length,
+        child: Column(
+          children: [
+            SizedBox(height: 8,),
+            TabBar(tabs: viewModel.sources.map((sourceDM) {
+              return buildTabWidget(sourceDM.name ?? "unkown",
+                  viewModel.currentTabIndex == viewModel.sources.indexOf(sourceDM));
+            }).toList(),
+              isScrollable: true,
+              indicatorColor: Colors.transparent,
+              onTap: (index){
+                viewModel.currentTabIndex = index;
+                setState(() {});
+              },
+            ),
+            Expanded(
+              child: TabBarView(children: viewModel.sources.map((sourceDM) {
+                return TabContent(sourceDM);
+              }).toList()),
+            )
+          ],
+        ),
       ),
     );
   }

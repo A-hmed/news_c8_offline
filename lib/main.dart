@@ -1,9 +1,16 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:news_c8_online/model/sources_response.dart';
 import 'package:news_c8_online/screens/home/home.dart';
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  // FirebaseFirestore.instance.settings =
+  //     Settings(persistenceEnabled: false,
+  //         cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED);
   runApp(const MyApp());
 }
 

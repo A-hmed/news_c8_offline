@@ -18,9 +18,6 @@ abstract class ApiManager{
     Map json  = jsonDecode(response.body);
     print("SourcesResponse: $json}");
     SourcesResponse responseDM = SourcesResponse.fromJson(json);
-    if(responseDM.code != null){
-      throw ApiException(responseDM.code!);
-    }
     return responseDM;
   }
 

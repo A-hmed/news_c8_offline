@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "176917314747",
+    "project_id": "news-offline-dc504",
+    "storage_bucket": "news-offline-dc504.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:176917314747:android:e942dc28f01a9b003cfd9e",
+        "android_client_info": {
+          "package_name": "com.example.news_c8_online"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "176917314747-p1d79onn5hp6mciqc653dfuk524tis4p.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBAbRpClljUs1KWeLxYWawIOIRJGLBsgsU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "176917314747-p1d79onn5hp6mciqc653dfuk524tis4p.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
